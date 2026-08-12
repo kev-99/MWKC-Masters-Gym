@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masters Gym — Register Now | MWKC</title>
+<style>
+  /* =====================================================================
+     ADJUSTABLE ELEMENTS — everything you're likely to need to change
+     is listed here and flagged again inline with an "ADJUSTABLE" comment.
+     1. Registration form (one combined form for registering + health info)
+                              -> search "REGISTRATION_FORM" in the <script>
+                                 at the bottom of the page
+     2. Poll vote numbers / bar heights -> CSS custom properties below
+     3. Colours              -> :root custom properties below
+     ===================================================================== */
+
+  :root {
+    --color-navy: #102a38;
+    --color-navy-light: #1c3f52;
+    --color-coral: #de5a3d;
+    --color-teal: #276f76;
+    --color-teal-light: #eaf1f1;
+    --color-cream: #faf9f5;
+    --color-grey: #48565a;
+    --color-border: #d6d1c4;
+    --radius: 14px;
+
+    /* ADJUSTABLE: poll results — change the number to match real votes.
+       Bars are drawn as a percentage of --votes-max, so update that too
+       if any single slot ever exceeds 38. */
+    --votes-max: 38;
+    --votes-mon330: 19;
+    --votes-mon645: 10;
+    --votes-thu445: 10;
+    --votes-fri11: 20;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--color-navy);
+    background: var(--color-cream);
+    line-height: 1.5;
+  }
+
+  img, svg { display: block; max-width: 100%; }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+
+    & .page__section {
+      margin-top: 44px;
+    }
+  }
+
+  /* -------------------------------- Hero -------------------------------- */
+  .hero {
+    background: var(--color-navy);
+    color: #fff;
+    padding: 40px 22px 34px;
+    margin: 0 -20px;
+    border-radius: 0 0 24px 24px;
+
+    & .hero__eyebrow {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9fb7bd;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    & .hero__title {
+      font-size: clamp(28px, 7vw, 40px);
+      line-height: 1.1;
+      margin: 0 0 14px;
+      font-weight: 800;
+
+      & span { color: var(--color-coral); }
+    }
+
+    & .hero__subtitle {
+      font-size: 16px;
+      color: #d7e4e2;
+      margin: 0 0 22px;
+      max-width: 52ch;
+    }
+
+    & .hero__cta {
+      display: inline-block;
+      background: var(--color-coral);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-size: 15px;
+    }
+  }
+
+  /* ------------------------------ Section head --------------------------- */
+  .section-head {
+    margin-bottom: 16px;
+
+    & .section-head__title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 0 6px;
+      color: var(--color-navy);
+    }
+
+    & .section-head__subtitle {
+      margin: 0;
+      color: var(--color-grey);
+      font-size: 15px;
+    }
+  }
+
+  /* ------------------------------- Poll bars ------------------------------ */
+  .poll {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 20px;
+
+    & .poll__row {
+      margin-bottom: 16px;
+
+      &:last-child { margin-bottom: 0; }
+    }
+
+    & .poll__row-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+
+      & .poll__row-votes { color: var(--color-teal); font-weight: 800; }
+    }
+
+    & .poll__track {
+      background: var(--color-teal-light);
+      border-radius: 999px;
+      height: 14px;
+      overflow: hidden;
+    }
+
+    & .poll__bar {
+      height: 100%;
+      width: 0%; /* animated in by JS on load, see <script> at bottom */
+      background: linear-gradient(90deg, var(--color-teal), var(--color-coral));
+      border-radius: 999px;
+      transition: width 1.1s ease;
+    }
+  }
+
+  /* ------------------------------ Block cards ----------------------------- */
+  .blocks {
+    display: grid;
+    gap: 16px;
+  }
+
+  .block-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+
+    & .block-card__head {
+      background: var(--color-navy);
+      color: #fff;
+      padding: 16px 18px;
+
+      & .block-card__name {
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--color-coral);
+        font-weight: 800;
+        margin: 0 0 4px;
+      }
+
+      & .block-card__dates {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+      }
+    }
+
+    & .block-card__body {
+      padding: 6px 18px 18px;
+    }
+
+    & .session-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--color-border);
+
+      & .session-row__time {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      & .session-row__votes {
+        display: block;
+        font-size: 12px;
+        color: var(--color-grey);
+        font-weight: 400;
+        margin-top: 2px;
+      }
+
+      & .session-row__register {
+        flex-shrink: 0;
+        background: var(--color-coral);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .callout {
+    background: var(--color-teal-light);
+    border: 1px solid var(--color-teal);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-top: 16px;
+    font-size: 14.5px;
+
+    & strong { color: var(--color-navy); }
+  }
+
+  /* -------------------------------- Accordion ------------------------------ */
+  .accordion {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .accordion-item {
+    border-top: 1px solid var(--color-border);
+
+    &:first-child { border-top: none; }
+
+    & .accordion-item__button {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 16px 18px;
+      font: inherit;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--color-navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      gap: 12px;
+    }
+
+    & .accordion-item__icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-teal-light);
+      color: var(--color-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      transition: transform 0.25s ease;
+    }
+
+    & .accordion-item__panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+
+      & p {
+        margin: 0 18px 16px;
+        color: var(--color-grey);
+        font-size: 14.5px;
+      }
+    }
+
+    &.accordion-item--open .accordion-item__icon {
+      transform: rotate(45deg);
+    }
+  }
+
+  /* --------------------------------- Footer --------------------------------- */
+  .footer {
+    margin-top: 48px;
+    text-align: center;
+    color: var(--color-grey);
+    font-size: 13px;
+
+    & .footer__club { font-weight: 800; color: var(--color-navy); }
+  }
+
+  @media (min-width: 600px) {
+    .blocks { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <p class="hero__eyebrow">Manly Warringah Kayak Club</p>
+    <h1 class="hero__title">Masters Gym is <span>back</span> — register now</h1>
+    <p class="hero__subtitle">20 grant funded, instructor-led sessions with qualified coach Karla Hurst. Here are the session times you voted for and how to lock in your spot.</p>
+    <a class="hero__cta" href="#schedule">See the schedule &amp; register</a>
+  </header>
+
+  <section class="page__section">
+    <div class="section-head">
+      <h2 class="section-head__title">What you told us</h2>
+      <p class="section-head__subtitle">38 members voted on their preferred time. Here's how it landed:</p>
+    </div>
+    <div class="poll" id="poll">
+      <div class="poll__row">
+        <div class="poll__row-label"><span>Monday 3:30–4:30pm</span><span class="poll__row-votes">19 votes</span></div>
+        <div class="poll__track"><div class="poll__bar" data-votes="19"></div></div>
+      </div>
+      <div class="poll__row">
+        <div class="poll__row-label"><span>Monday 6:45–7:45pm</span><span class="poll__row-votes">10 votes</span></div>
+        <div class="poll__track"><div class="poll__bar" data-votes="10"></div></div>
+      </div>
+      <div class="poll__row">
+        <div class="poll__row-label"><span>Thursday 4:45–5:45pm</span><span class="poll__row-votes">10 votes</span></div>
+        <div class="poll__track"><div class="poll__bar" data-votes="10"></div></div>
+      </div>
+      <div class="poll__row">
+        <div class="poll__row-label"><span>Friday 11:00am–12:00pm</span><span class="poll__row-votes">20 votes</span></div>
+        <div class="poll__track"><div class="poll__bar" data-votes="20"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page__section" id="schedule">
+    <div class="section-head">
+      <h2 class="section-head__title">Your schedule — two 5-week blocks</h2>
+      <p class="section-head__subtitle">Every time slot gets its turn. Tap Register next to your preferred time — one quick form registers you for that session <em>and</em> collects Karla's health questions in a single step.</p>
+    </div>
+
+    <div class="blocks">
+      <div class="block-card">
+        <div class="block-card__head">
+          <p class="block-card__name">Block A</p>
+          <p class="block-card__dates">Mon 24 Aug – Mon 28 Sep 2026</p>
+        </div>
+        <div class="block-card__body">
+          <div class="session-row">
+            <div>
+              <span class="session-row__time">Monday 6:45–7:45pm</span>
+              <span class="session-row__votes">24, 31 Aug, 7, 21, 28 Sep — no session 14 Sep (gym booked for the committee meeting)</span>
+            </div>
+            <!-- ADJUSTABLE: this button's href is set by the script at the bottom of the
+                 page (see REGISTRATION_FORM config) so it opens the form with this exact
+                 session pre-selected. The href below is just the no-JS fallback. -->
+            <a class="session-row__register js-register-btn" data-session-label="Monday 6:45pm (Block A)" href="https://forms.gle/REPLACE-WITH-KARLAS-FORM" target="_blank" rel="noopener">Register</a>
+          </div>
+          <div class="session-row">
+            <div>
+              <span class="session-row__time">Friday 11:00am–12:00pm</span>
+              <span class="session-row__votes">Every Friday, 28 Aug – 25 Sep</span>
+            </div>
+            <a class="session-row__register js-register-btn" data-session-label="Friday 11:00am (Block A)" href="https://forms.gle/REPLACE-WITH-KARLAS-FORM" target="_blank" rel="noopener">Register</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="block-card">
+        <div class="block-card__head">
+          <p class="block-card__name">Block B</p>
+          <p class="block-card__dates">Mon 5 Oct – Thu 5 Nov 2026</p>
+        </div>
+        <div class="block-card__body">
+          <div class="session-row">
+            <div>
+              <span class="session-row__time">Monday 3:30–4:30pm</span>
+              <span class="session-row__votes">Every Monday, 5 Oct – 2 Nov</span>
+            </div>
+            <a class="session-row__register js-register-btn" data-session-label="Monday 3:30pm (Block B)" href="https://forms.gle/REPLACE-WITH-KARLAS-FORM" target="_blank" rel="noopener">Register</a>
+          </div>
+          <div class="session-row">
+            <div>
+              <span class="session-row__time">Thursday 4:45–5:45pm</span>
+              <span class="session-row__votes">Every Thursday, 8 Oct – 5 Nov</span>
+            </div>
+            <a class="session-row__register js-register-btn" data-session-label="Thursday 4:45pm (Block B)" href="https://forms.gle/REPLACE-WITH-KARLAS-FORM" target="_blank" rel="noopener">Register</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Important:</strong> you can register for <strong>one time slot only</strong>. Registering means committing to that exact day and time, every week, for all 5 weeks of the block — for example, registering for Friday 11am in Block A means Friday 11am on 28&nbsp;Aug, 4, 11, 18 and 25&nbsp;Sep, not a casual drop-in. (Monday 6:45pm runs to 5 sessions too — see the note on that session, it skips 14&nbsp;Sep and picks up an extra week at the end instead.)
+    </div>
+  </section>
+
+  <section class="page__section">
+    <div class="section-head">
+      <h2 class="section-head__title">Good to know before you register</h2>
+      <p class="section-head__subtitle">Tap each question for the details.</p>
+    </div>
+
+    <div class="accordion" id="accordion">
+      <div class="accordion-item">
+        <button class="accordion-item__button" type="button">
+          Why do I have to commit to all 5 weeks?
+          <span class="accordion-item__icon">+</span>
+        </button>
+        <div class="accordion-item__panel">
+          <p>Interest is high and Karla is paid from grant funding for these 20 sessions. An under-attended session is a wasted, paid-for spot that someone else on the list would have loved to have. Committing to the block keeps things fair and makes sure the funding isn't wasted.</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-item__button" type="button">
+          Can I register for more than one time slot?
+          <span class="accordion-item__icon">+</span>
+        </button>
+        <div class="accordion-item__panel">
+          <p>No — registration is for one time slot only, so as many members as possible get a spot. Pick the day and time that suits you best from Block A or Block B. However, after everyone has made their first pick, if we find there are slots available in other sessions, we'll make them available and let you know.</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-item__button" type="button">
+          What if I know I'll miss one week?
+          <span class="accordion-item__icon">+</span>
+        </button>
+        <div class="accordion-item__panel">
+          <p>Still go ahead and register — just let us know which week you'll be away when you sign up, so we can plan around it.</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-item__button" type="button">
+          I'm registered but I'm sick — what do I do?
+          <span class="accordion-item__icon">+</span>
+        </button>
+        <div class="accordion-item__panel">
+          <p>Please give us as much notice as possible, and at least 24 hours, so we can offer your spot to someone else on the list for that session.</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-item__button" type="button">
+          Do I need to do anything else after I register?
+          <span class="accordion-item__icon">+</span>
+        </button>
+        <div class="accordion-item__panel">
+          <p>No — it's one form. Tapping Register opens Karla's form with your session already selected; it asks for your name, any away weeks, and her usual health questions all in one go. Nothing further to fill out afterwards.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Questions? Contact Kevin Burke, Masters Gym Coordinator.</p>
+    <p class="footer__club">Manly Warringah Kayak Club</p>
+  </footer>
+
+</div>
+
+<script>
+  // ADJUSTABLE: Google Form pre-fill config. Each "Register" button opens
+  // Karla's combined registration + health form with the correct session
+  // already selected, using Google Forms' pre-fill link feature.
+  //
+  // To wire this up for real:
+  //   1. In Karla's form, add a "Which session are you registering for?"
+  //      question (multiple choice), with one option matching each
+  //      data-session-label value used below EXACTLY (case + spacing count).
+  //   2. Open the form, click the ⋮ menu -> "Get pre-filled link".
+  //   3. Select any one answer for that question, click "Get link".
+  //   4. Copy the generated URL. It looks like:
+  //        https://docs.google.com/forms/d/e/1FAI.../viewform?usp=pp_url&entry.123456789=Some+Answer
+  //      - baseUrl is everything before "?usp=pp_url"
+  //      - sessionEntryId is the "entry.123456789" part
+  //   5. Paste both into the values below. Use the long docs.google.com
+  //      form link here, not a shortened forms.gle link — shortlinks can
+  //      drop the pre-fill query string.
+  //   If this isn't filled in, buttons just open the form's baseUrl as-is
+  //   (no session pre-selected) — still fully functional, just less slick.
+  var REGISTRATION_FORM = {
+    baseUrl: "https://forms.gle/REPLACE-WITH-KARLAS-FORM",
+    sessionEntryId: "entry.REPLACE_WITH_ENTRY_ID"
+  };
+
+  (function () {
+    var buttons = document.querySelectorAll('.js-register-btn');
+    if (REGISTRATION_FORM.baseUrl.indexOf('REPLACE-WITH-KARLAS-FORM') !== -1) return; // not configured yet
+    buttons.forEach(function (btn) {
+      var label = btn.getAttribute('data-session-label');
+      var sep = REGISTRATION_FORM.baseUrl.indexOf('?') === -1 ? '?' : '&';
+      btn.href = REGISTRATION_FORM.baseUrl + sep + 'usp=pp_url&' +
+        REGISTRATION_FORM.sessionEntryId + '=' + encodeURIComponent(label);
+    });
+  })();
+
+  // Animate the poll bars in on load. Widths are derived from each bar's
+  // data-votes attribute against --votes-max, so updating the numbers in
+  // the HTML/CSS above is enough to keep this correct — no other JS edits
+  // needed if the vote counts ever change.
+  (function () {
+    var maxVotes = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--votes-max')) || 38;
+    var bars = document.querySelectorAll('.poll__bar');
+    var runAnimation = function () {
+      bars.forEach(function (bar) {
+        var votes = parseFloat(bar.getAttribute('data-votes')) || 0;
+        var pct = Math.min(100, (votes / maxVotes) * 100);
+        requestAnimationFrame(function () {
+          bar.style.width = pct + '%';
+        });
+      });
+    };
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            runAnimation();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      observer.observe(document.getElementById('poll'));
+    } else {
+      window.addEventListener('load', runAnimation);
+    }
+  })();
+
+  // Simple accordion: one click toggles that item's panel open/closed.
+  // Multiple panels can be open at once — remove the "closeOthers" call
+  // below if that's not the desired behaviour.
+  (function () {
+    var items = document.querySelectorAll('.accordion-item');
+    items.forEach(function (item) {
+      var button = item.querySelector('.accordion-item__button');
+      var panel = item.querySelector('.accordion-item__panel');
+      button.addEventListener('click', function () {
+        var isOpen = item.classList.contains('accordion-item--open');
+        if (isOpen) {
+          item.classList.remove('accordion-item--open');
+          panel.style.maxHeight = null;
+        } else {
+          item.classList.add('accordion-item--open');
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
