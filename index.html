@@ -246,6 +246,14 @@
       & .session-row__time {
         font-size: 16px;
         font-weight: 700;
+
+        /* ADJUSTABLE: applied via JS (see SESSION_FULL config in the
+           <script> at the bottom) when a session is marked full — fades
+           the time to signal it's no longer available. */
+        &.session-row__time--full {
+          color: var(--color-grey);
+          opacity: 0.55;
+        }
       }
 
       & .session-row__votes {
@@ -266,6 +274,16 @@
         padding: 10px 16px;
         border-radius: 999px;
         white-space: nowrap;
+
+        /* ADJUSTABLE: applied via JS when a session is marked full in the
+           SESSION_FULL config — washes out the button and makes it
+           unclickable, instead of the normal solid maroon "Register". */
+        &.session-row__register--full {
+          background: var(--color-border);
+          color: #8a8a8a;
+          cursor: not-allowed;
+          pointer-events: none;
+        }
       }
     }
   }
@@ -555,6 +573,37 @@
       var sep = REGISTRATION_FORM.baseUrl.indexOf('?') === -1 ? '?' : '&';
       btn.href = REGISTRATION_FORM.baseUrl + sep + 'usp=pp_url&' +
         REGISTRATION_FORM.sessionEntryId + '=' + encodeURIComponent(label);
+    });
+  })();
+
+  // ADJUSTABLE: "Session Full" toggle. Set any value below to true to mark
+  // that session as full — its Register button relabels to "Session Full",
+  // greys out, and becomes unclickable, and its time text fades. Each key
+  // must exactly match the matching button's data-session-label in the
+  // HTML above (and in REGISTRATION_FORM's usage, since it's the same
+  // label). To reopen a session, just set it back to false.
+  var SESSION_FULL = {
+    "Block A: 6.45pm to 7.45pm, Monday 24th Aug to Monday 28th Sep (no session 14th Sep)": false,
+    "Block A: 11am to Midday, Friday 28th Aug to 25th Sep": false,
+    "Block B: 3.30pm to 4.30pm, Monday 5th Oct to 5th Nov": false,
+    "Block B: 4.45pm to 5.45pm Thursday 8th Oct to 5th Nov": false
+  };
+
+  (function () {
+    document.querySelectorAll('.js-register-btn').forEach(function (btn) {
+      var label = btn.getAttribute('data-session-label');
+      if (!SESSION_FULL[label]) return;
+
+      btn.textContent = 'Session Full';
+      btn.classList.add('session-row__register--full');
+      btn.removeAttribute('href');
+      btn.removeAttribute('target');
+      btn.setAttribute('aria-disabled', 'true');
+      btn.addEventListener('click', function (e) { e.preventDefault(); });
+
+      var row = btn.closest('.session-row');
+      var timeEl = row && row.querySelector('.session-row__time');
+      if (timeEl) timeEl.classList.add('session-row__time--full');
     });
   })();
 
